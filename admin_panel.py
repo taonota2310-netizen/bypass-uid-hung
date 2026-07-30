@@ -150,3 +150,12 @@ def get_stats():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)
+@app.route('/lay-ma')
+def lay_ma():
+    try:
+        # Thay 'ten_file.txt' bằng tên file chứa mã trong folder mitmproxy
+        with open('mitmproxy-ca-cert.pem/ten_file.txt', 'r', encoding='utf-8') as f:
+            content = f.read()
+        return f"<pre>{content}</pre>"
+    except Exception as e:
+        return f"Lỗi đọc file: {str(e)}"
