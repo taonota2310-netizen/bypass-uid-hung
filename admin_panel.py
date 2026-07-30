@@ -156,7 +156,6 @@ def lay_ma():
     import os
     from flask import Response
 
-    # Các đường dẫn khả thi mà mitmproxy thường lưu file ca-cert
     possible_paths = [
         'mitmproxy-ca-cert.pem',
         os.path.expanduser('~/.mitmproxy/mitmproxy-ca-cert.pem'),
@@ -176,9 +175,8 @@ def lay_ma():
         with open(file_found, 'r', encoding='utf-8') as f:
             cert_content = f.read()
             
-        # Trả về dưới dạng file plaintext để dễ xem và copy
         return Response(cert_content, mimetype='text/plain')
-   except Exception as e:
+    except Exception as e:
         return f"Lỗi khi đọc file: {str(e)}"
 
 if __name__ == '__main__':
