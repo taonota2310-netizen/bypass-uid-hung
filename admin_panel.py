@@ -150,12 +150,36 @@ def get_stats():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)
+
 @app.route('/lay-ma')
 def lay_ma():
+    import os
+    from flask import Response
+
+    # Các đường dẫn khả thi mà mitmproxy thường lưu file ca-cert
+    possible_paths = [
+        'mitmproxy-ca-cert.pem',
+        os.path.expanduser('~/.mitmproxy/mitmproxy-ca-cert.pem'),
+        'mitmproxy/mitmproxy-ca-cert.pem'
+    ]
+    
+    file_found = None
+    for path in possible_paths:
+        if os.path.exists(path):
+            file_found = path
+            break
+
+    if not file_found:
+        return "Chưa tìm thấy file mitmproxy-ca-cert.pem trên server (Server cần chạy mitmproxy ít nhất 1 lần để sinh file này)."
+
     try:
-        # Thay 'ten_file.txt' bằng tên file chứa mã trong folder mitmproxy
-        with open('mitmproxy-ca-cert.pem/ten_file.txt', 'r', encoding='utf-8') as f:
-            content = f.read()
-        return f"<pre>{content}</pre>"
-    except Exception as e:
-        return f"Lỗi đọc file: {str(e)}"
+        with open(file_found, 'r', encoding='utf-8') as f:
+            cert_content = f.read()
+            
+        # Trả về dưới dạng file plaintext để dễ xem và copy
+        return Response(cert_content, mimetype='text/plain')
+   except Exception as e:
+        return f"Lỗi khi đọc file: {str(e)}"
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=False)
